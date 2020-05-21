@@ -2,7 +2,7 @@ subnet_ids = [
   "",
   ""
 ]
-username = ""
-password = ""
+username = "postgres"
+password = "password"
 vpc_id = ""
 name = "acme-db"
