@@ -11,7 +11,8 @@ The implemented logic is a simple task tracking tool.
 ```
 npm install
 npm start
-``
+```
+
 **With Migrations**
 
 ```
