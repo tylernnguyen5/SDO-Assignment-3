@@ -147,8 +147,9 @@ jobs:
       - run:
           name: Package helm
           command: | 
-
-            #helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts
+            cd helm
+            #helm package acme --app-version ${CIRCLE_SHA1} -d artifacts/acme.tgz
+      
       - run:
           name: Package infra
           command: |
@@ -159,23 +160,57 @@ jobs:
           paths:
             - artifacts
 
+  # deploy-test:
+  #   docker:
+  #     - image: cimg/base:2020.01
+  #   environment:
+  #     ENV: test
+  #   steps:
+  #     - attach_workspace: 
+  #         at: ./
 
+  #     - setup-cd
+
+  #     - run: 
+  #         name: deploy infra
+  #         command: |
+  #           cd artifacts/infra
+  #           make init
+  #           make up
+  #           terraform output endpoint > ../dbendpoint.txt
+
+  #     - run:
+  #         name: deploy app
+  #         command: |
+  #           helm upgrade techtestapp artifacts/techtestapp.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+
+  #     - run:
+  #         name: upgrade database
+  #         command: |
+  #           kubectl exec deployment/tech-test-app -n test -- ./TechTestApp updatedb -s
+          
 
 workflows:
   version: 2
   build-test-package:
     jobs:
-      - build
-      - integration:
-          requires: 
-            - build
-      - e2e:
+      # - build
+      # - integration:
+      #     requires: 
+      #       - build
+      # - e2e:
+      #     requires:
+      #       - build
+      # - package:
+      #     requires:
+      #       - e2e
+      #       - integration
+      #     filters:
+      #       branches:
+      #         only: master
+
+      - package
+      - deploy-test:
           requires:
-            - build
-      - package:
-          requires:
-            - e2e
-            - integration
-          filters:
-            branches:
-              only: master
+            - package
+          
