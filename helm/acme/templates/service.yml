@@ -1,13 +1,17 @@
 # The application is deployed and is accessible internally in the Kubernetes cluster, but for it to be available publicly we need to define a way for external users to access it. We do this by defining a service, and setting up an ingress through a load balancer
 apiVersion: v1
 kind: Service
+
 metadata: 
-    name: "acme"
+    name: "service"
+
 spec:
+    selector:
+        app: "acme"
+    
+    type: LoadBalancer
+
     ports: 
         - port: 80
           targetPort: 80
           protocol: TCP
-    type: LoadBalancer
-    selector:
-        app: "acme"

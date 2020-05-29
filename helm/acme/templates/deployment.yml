@@ -1,20 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
     name: "acme"
+    labels:
+        app: "acme"
+
 spec:
     selector:
         matchLabels:
             app: "acme"
+
     replicas: {{ .Values.replicaCount }}
-    template:
+
+    template:   # For the Pods
         metadata:
             labels:
                 app: "acme"
-        spec:
+        
+        spec:   # Indicates that the Pods run one container
             containers:
-            - image: {{ .Values.image }}
+            - name: "acme"
+              image: {{ .Values.image }}    # Could be pulled from Docker Hub or from AWS ECR
               imagePullPolicy: Always
-              name: "acme"
               ports: 
               - containerPort: 80
