@@ -185,7 +185,7 @@ jobs:
 
             # TODO: uncomment below
             # Init remote backend
-            # make init
+            make init
 
             # Deploy RDS instance
             # make up 
