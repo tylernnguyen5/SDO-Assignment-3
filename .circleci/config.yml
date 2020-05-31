@@ -194,8 +194,11 @@ jobs:
 
       # TODO: Delete this debug step      
       - run:
-          name: List content of CirlceCI directory
-          command: ls -al
+          name: List content 
+          command: |
+            cd artifacts && ls -al
+            cat artifacts/image.txt
+            cat artifacts/dbendpoint.txt
             
       - run:
           name: Deploy app
