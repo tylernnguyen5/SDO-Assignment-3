@@ -197,8 +197,8 @@ jobs:
           name: List content 
           command: |
             cd artifacts && ls -al
-            cat artifacts/image.txt
-            cat artifacts/dbendpoint.txt
+            cat ./image.txt
+            cat ./dbendpoint.txt
             
       - run:
           name: Deploy app
