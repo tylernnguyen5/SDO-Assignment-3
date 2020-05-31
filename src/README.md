@@ -30,7 +30,7 @@ We have added some [Mocha](https://mochajs.org) based test. You can run them by 
 
 ## Running end2end
 
-An environment variable has been added to set allow end 2 end testing to be ran again any endpoint.
+An environment variable has been added to set allow end 2 end testing to be ran against any endpoint.
 
 | variable | default|
 |-|-|

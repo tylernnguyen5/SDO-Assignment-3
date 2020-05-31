@@ -10,4 +10,4 @@ appVersion: 1.16.0
 
 replicaCount: 3
 
-image: cimg/base:2020.01    # For deployment.yml
+# image: cimg/base:2020.01    # For deployment.yml

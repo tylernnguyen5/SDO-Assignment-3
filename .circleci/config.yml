@@ -147,8 +147,7 @@ jobs:
       - run:
           name: Package helm
           command: | 
-            cd helm
-            helm package acme --app-version ${CIRCLE_SHA1} -d artifacts/acme.tgz
+            helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts/acme.tgz
       
       - run:
           name: Package infra
@@ -160,57 +159,87 @@ jobs:
           paths:
             - artifacts
 
-  # deploy-test:
-  #   docker:
-  #     - image: cimg/base:2020.01
-  #   environment:
-  #     ENV: test
-  #   steps:
-  #     - attach_workspace: 
-  #         at: ./
 
-  #     - setup-cd
+  # Tut10 example
+  # TODO: passing image tag from artifacts/image.txt
+  # TODO: passing db endpoint from artifacts/dbendpoint.txt
+  # TODO: Add this to documentation:
+    # -i : is to make the build install the chart if it isn’t already installed 
+    # -n test : is telling helm to use the test namespace 
+    # --wait : is telling helm to wait until all actions are complete until continuing
+  deploy-test:
+    docker:
+      - image: cimg/base:2020.01
+    environment:
+      ENV: test
+    steps:
+      - attach_workspace: 
+          at: ./
 
-  #     - run: 
-  #         name: deploy infra
-  #         command: |
-  #           cd artifacts/infra
-  #           make init
-  #           make up
-  #           terraform output endpoint > ../dbendpoint.txt
+      - setup-cd
 
-  #     - run:
-  #         name: deploy app
-  #         command: |
-  #           helm upgrade techtestapp artifacts/techtestapp.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      - run: 
+          name: Deploy infra
+          command: |
+            cd artifacts/infra
 
-  #     - run:
-  #         name: upgrade database
-  #         command: |
-  #           kubectl exec deployment/tech-test-app -n test -- ./TechTestApp updatedb -s
+            # TODO: uncomment below
+            # Init remote backend
+            # make init
+
+            # Deploy RDS instance
+            # make up 
+
+            terraform output endpoint > ../dbendpoint.txt
+
+      - run:
+          name: Generate test namespace environment in the Kubernetes cluster
+          command: |
+            kubectl create namespace test
+
+      - run:
+          name: List content of artifacts directory
+          command: cd artifacts && ls -al
+
+      # TODO: run db update script
+      # - run:
+      #     name: Run database migration script
+      #     command: |
+      #       artifacts/node_modules/.bin/sequelize db:migrate
+            
+      - run:
+          name: Deploy app
+          command: |
+            helm upgrade acme artifacts/acme.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+
+
           
 
 workflows:
   version: 2
   build-test-package:
     jobs:
-      - build
-      - integration:
-          requires: 
-            - build
-      - e2e:
-          requires:
-            - build
-      - package:
-          requires:
-            - e2e
-            - integration
+      # TODO: Update workflow
+      # - build
+      # - integration:
+      #     requires: 
+      #       - build
+      # - e2e:
+      #     requires:
+      #       - build
+      # - package:
+      #     requires:
+      #       - e2e
+      #       - integration
       #     filters:
       #       branches:
       #         only: master
 
-      # - package
-      # - deploy-test:
-      #     requires:
-      #       - package
+      - build
+      - package:
+          requires: 
+            - build
+      - deploy-test:
+          requires:
+            - package
           

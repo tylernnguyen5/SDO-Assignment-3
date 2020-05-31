@@ -23,5 +23,8 @@ spec:
             - name: "acme"
               image: {{ .Values.image }}    # Could be pulled from Docker Hub or from AWS ECR
               imagePullPolicy: Always
+              env:
+                - name: "ENDPOINT"
+                  value: {{ .Values.dbhost }}
               ports: 
               - containerPort: 80
