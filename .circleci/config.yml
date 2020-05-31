@@ -192,10 +192,11 @@ jobs:
 
             terraform output endpoint > ../dbendpoint.txt
 
-      - run:
-          name: Generate test namespace environment in the Kubernetes cluster
-          command: |
-            kubectl create namespace test
+      # TODO: Might need to delete this step
+      # - run:
+      #     name: Generate test namespace environment in the Kubernetes cluster
+      #     command: |
+      #       kubectl create namespace test
 
       # TODO: run db update script
       - run:
