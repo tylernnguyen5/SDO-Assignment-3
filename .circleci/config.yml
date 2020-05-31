@@ -188,17 +188,9 @@ jobs:
             make init
 
             # Deploy RDS instance
-            # make up 
+            make up 
 
             terraform output endpoint > ../dbendpoint.txt
-
-      # TODO: run db update script
-      - run:
-          name: Run database migration script
-          command: |
-            cd src
-            npm install
-            node_modules/.bin/sequelize db:migrate
 
       # TODO: Delete this debug step      
       - run:
