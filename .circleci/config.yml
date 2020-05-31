@@ -147,7 +147,7 @@ jobs:
       - run:
           name: Package helm
           command: | 
-            helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts/acme.tgz
+            helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts
       
       - run:
           name: Package infra
@@ -197,20 +197,27 @@ jobs:
           command: |
             kubectl create namespace test
 
-      - run:
-          name: List content of artifacts directory
-          command: cd artifacts && ls -al
 
       # TODO: run db update script
-      # - run:
-      #     name: Run database migration script
-      #     command: |
-      #       artifacts/node_modules/.bin/sequelize db:migrate
+      - run:
+          name: Run database migration script
+          command: |
+            cd src
+            npm install
+            node_modules/.bin/sequelize db:migrate
+
+      # TODO: Delete this debug step      
+      - run:
+          name: List content of CirlceCI directory
+          command: ls -al
             
       - run:
           name: Deploy app
           command: |
-            helm upgrade acme artifacts/acme.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+            
+            # List deployments in test name space
+            helm list -n test
 
 
           
