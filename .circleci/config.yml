@@ -199,6 +199,7 @@ jobs:
       #       kubectl create namespace test
 
       # TODO: run db update script
+      - checkout
       - run:
           name: Run database migration script
           command: |
