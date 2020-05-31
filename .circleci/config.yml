@@ -192,14 +192,7 @@ jobs:
 
             terraform output endpoint > ../dbendpoint.txt
 
-      # TODO: Might need to delete this step
-      # - run:
-      #     name: Generate test namespace environment in the Kubernetes cluster
-      #     command: |
-      #       kubectl create namespace test
-
       # TODO: run db update script
-      - checkout
       - run:
           name: Run database migration script
           command: |
@@ -220,8 +213,11 @@ jobs:
             # List deployments in test name space
             helm list -n test
 
-
-          
+      - run:
+          name: Run database update script
+          command: |
+            kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
+        
 
 workflows:
   version: 2
