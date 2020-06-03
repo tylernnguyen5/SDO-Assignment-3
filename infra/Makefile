@@ -8,4 +8,4 @@ init:
 	# terraform init --backend-config="key=state/${ENV}.tfstate" --backend-config="dynamodb_table=" --backend-config="bucket="
 	
 	# TODO: Might delete the line below
-	terraform init --backend-config="key=state/${ENV}.tfstate" --backend-config="dynamodb_table=RMIT-locktable-8ukgxp" --backend-config="bucket=rmit-tfstate-8ukgxp"
+	terraform init --backend-config="key=state/${ENV}.tfstate" --backend-config="dynamodb_table=RMIT-locktable-rvk6gg" --backend-config="bucket=rmit-tfstate-rvk6gg"
