@@ -197,12 +197,14 @@ jobs:
       #     name: Taking the infra down
       #     command: cd artifacts/infra && make down
 
+
       - run:
           name: Deploy app
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
             # helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt)
       
+
       - run:
           name: Run database update script
           command: |
