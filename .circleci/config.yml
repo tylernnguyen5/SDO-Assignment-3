@@ -195,6 +195,8 @@ jobs:
       - run:
           name: Deploy app
           command: |
+            chmod +x artifacts/acme-0.1.0.tgz
+
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --timeout 600s --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
