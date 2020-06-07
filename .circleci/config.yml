@@ -195,13 +195,16 @@ jobs:
       - run:
           name: Deploy app without database
           command: |
+            cat artifacts/image.txt
+            cat artifacts/dbendpoint.txt
+
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
 
-      - run:
-          name: Upgrade app with database
-          command: |
-            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      # - run:
+      #     name: Upgrade app with database
+      #     command: |
+      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
       - run:
@@ -209,10 +212,6 @@ jobs:
           command: |
             kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
-      # TODO: Remove this code below      
-      # - run: 
-      #     name: Taking the infra down
-      #     command: cd artifacts/infra && make down
         
 
   # TODO: Update e2e test to run against the non-production environment
@@ -253,6 +252,17 @@ jobs:
             
             npm run test-e2e
 
+
+  tear-down:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - attach_workspace: 
+          at: ./
+      # TODO: Remove this code below      
+      - run: 
+          name: Taking the infra down
+          command: cd artifacts/infra && make down
             
 workflows:
   version: 2
@@ -291,4 +301,6 @@ workflows:
       # - deploy-prod:
       #     requires:
       #       - approval
-          
+      
+      
+      # - tear-down
