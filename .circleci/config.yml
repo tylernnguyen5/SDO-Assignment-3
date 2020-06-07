@@ -290,9 +290,9 @@ workflows:
       - package:
           requires: 
             - build
-      - deploy-test:
-          requires:
-            - package
+      # - deploy-test:
+      #     requires:
+      #       - package
       # - e2e-update:
       #     requires:
       #       - deploy-test
@@ -305,4 +305,4 @@ workflows:
       #       - approval
       
       
-      # - tear-down
+      - tear-down
