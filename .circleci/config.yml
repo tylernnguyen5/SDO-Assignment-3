@@ -198,16 +198,16 @@ jobs:
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
 
-      - run:
-          name: Upgrade app with database
-          command: |
-            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      # - run:
+      #     name: Upgrade app with database
+      #     command: |
+      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
-      - run:
-          name: Run database update script
-          command: |
-            kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
+      # - run:
+      #     name: Run database update script
+      #     command: |
+      #       kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
         
 
@@ -219,6 +219,7 @@ jobs:
         environment:
           POSTGRES_PASSWORD: password
     environment:
+      ENV: test
       QAW_HEADLESS: true
       DB_USERNAME: postgres
       DB_PASSWORD: password
@@ -226,17 +227,19 @@ jobs:
       # DB_HOSTNAME: $(cat artifacts/dbendpoint.txt)
 
     steps: 
-      - checkout
+      - attach_workspace: 
+          at: ./
 
-      # - run:
-      #     name: set up environment
-      #     command: |
-      #       cd src
-      #       npm install 
-      #       apt update
-      #       apt install postgresql-client-10 -y
+      - run:
+          name: set up environment
+          command: |
+            export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+
+            apt update
+            apt install postgresql-client-10 -y
             
-      #       psql -h localhost -U postgres -c "CREATE DATABASE servian;"
+            psql -h acme-db-test.cluster-cuouneq640ll.us-east-1.rds.amazonaws.com -U postgres -c "CREATE DATABASE servian;"
+            # psql -h $(cat artifacts/dbendpoint.txt) -U postgres -c "CREATE DATABASE servian;"
 
       - run: 
           name: End 2 end tests
