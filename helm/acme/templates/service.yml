@@ -6,12 +6,11 @@ metadata:
   name: "acme"
 
 spec:
-  selector:
-    app: "acme"
-    
-  type: LoadBalancer
-
   ports: 
     - port: 80
       targetPort: 80
       protocol: TCP
+  type: LoadBalancer
+  selector:
+    app: "acme"
+    
