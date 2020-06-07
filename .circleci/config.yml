@@ -195,9 +195,6 @@ jobs:
       - run:
           name: Deploy app without database
           command: |
-            cat artifacts/image.txt
-            cat artifacts/dbendpoint.txt
-
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
 
@@ -207,10 +204,10 @@ jobs:
       #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
-      - run:
-          name: Run database update script
-          command: |
-            kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
+      # - run:
+      #     name: Run database update script
+      #     command: |
+      #       kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
         
 
