@@ -6,6 +6,12 @@
 
 ---
 
+## Dependencies
+
+
+
+---
+
 ## HELM Chart
 
 
@@ -43,7 +49,13 @@ kubectl create configmap cluster-info \
 --from-literal=logs.region=us-east-1 -n amazon-cloudwatch
 ```
 
-Download and apply the manifest file for FluentD via this link
+Download the manifest file for FluentD via this [link] (https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluentd/fluentd.yaml) and apply with this command from your terminal:
+
+```
+kubectl apply -f fluentd.yaml
+```
+
+
 
 ---
 
