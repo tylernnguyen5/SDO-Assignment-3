@@ -290,6 +290,8 @@ workflows:
           requires: 
             - build
       - tear-down
+          requires: 
+                - package
       # - deploy-test:
       #     requires:
       #       - package
