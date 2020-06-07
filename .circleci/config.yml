@@ -258,6 +258,8 @@ jobs:
   tear-down:
     docker:
       - image: cimg/base:2020.01
+    environment:
+      ENV: test
     steps:
       - attach_workspace: 
           at: ./
