@@ -190,18 +190,21 @@ jobs:
             make up 
 
             terraform output endpoint > ../dbendpoint.txt
+
+            # Destroy
+            make down
             
 
-      - run:
-          name: Deploy app without database
-          command: |
-            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
+      # - run:
+      #     name: Deploy app without database
+      #     command: |
+      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
 
-      - run:
-          name: Upgrade app with database
-          command: |
-            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      # - run:
+      #     name: Upgrade app with database
+      #     command: |
+      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
       # - run:
@@ -291,12 +294,9 @@ workflows:
       - package:
           requires: 
             - build
-      - tear-down:
-          requires: 
-                - package
-      # - deploy-test:
-      #     requires:
-      #       - package
+      - deploy-test:
+          requires:
+            - package
       # - e2e-update:
       #     requires:
       #       - deploy-test
