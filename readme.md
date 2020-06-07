@@ -1,3 +1,21 @@
+**Student Name: Thach Ngoc Nguyen**
+
+**Student Number: s3651311**
+
 # ACME App
 
-To stand up the kubernetes cluster go into the `environment` directory and follow the directions in the make file
+---
+
+## DEPENDENCIES
+
+
+
+---
+
+## DEPLOY INSTRUCTION
+
+
+---
+
+## CLEAN UP INSTRUCTION
+
