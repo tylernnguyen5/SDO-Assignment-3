@@ -163,8 +163,6 @@ jobs:
 
 
   # Tut10 example
-  # TODO: passing image tag from artifacts/image.txt
-  # TODO: passing db endpoint from artifacts/dbendpoint.txt
   # TODO: Add this to documentation:
     # -i : is to make the build install the chart if it isn’t already installed 
     # -n test : is telling helm to use the test namespace 
@@ -197,6 +195,8 @@ jobs:
       - run:
           name: Deploy app
           command: |
+            cd artifacts && ls -al
+
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --timeout 600s --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
