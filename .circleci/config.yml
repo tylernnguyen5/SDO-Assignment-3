@@ -211,55 +211,6 @@ jobs:
           command: |
             kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
-        
-
-  # TODO: Update e2e test to run against the non-production environment
-  e2e-update:
-    docker:
-      - image: qawolf/qawolf:v0.9.2
-      - image: postgres:10.7
-        environment:
-          POSTGRES_PASSWORD: password
-    environment:
-      QAW_HEADLESS: true
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-      DB_NAME: servian
-      DB_HOSTNAME: localhost
-      LOGIN_USERNAME: postgres
-      LOGIN_PASSWORD: password
-      ENV: test
-
-    steps: 
-      - checkout
-
-      - attach_workspace: 
-          at: ./
-
-      - run:
-          name: set up environment
-          command: |
-            export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
-
-            cd src
-            npm install 
-            apt update
-            apt install postgresql-client-10 -y
-            
-            psql -h $(cat ../artifacts/dbendpoint.txt) -U postgres -c "CREATE DATABASE servian;"
-
-      - run: 
-          name: End 2 end tests
-          no_output_timeout: 2m
-          command: |
-            export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
-
-            cd src
-
-            npm run start:prod & 
-            npx wait-on $DB_HOSTNAME
-            
-            npm run test-e2e
             
 workflows:
   version: 2
