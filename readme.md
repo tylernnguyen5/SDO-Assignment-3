@@ -91,13 +91,6 @@ We have a directory called `helm`. Inside we have a HELM chart called `acme`.
 
 ---
 
-### Deployment & Service Manifests
-
-The manifests are located in `helm/acme/templates`
-
-
----
-
 ## Deploy application into a non-production environment
 
 In the `.circleci/config.yml` file, this job has been declared as `deploy-test`

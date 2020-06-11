@@ -244,10 +244,10 @@ jobs:
           command: |
             helm delete acme -n test
 
-      - run:
-          name: Deploy app without database
-          command: |
-            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
+      # - run:
+      #     name: Deploy app without database
+      #     command: |
+      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
       # TODO: Combine to 2 stepss
       - run:
@@ -297,9 +297,9 @@ workflows:
       - deploy-test:
           requires:
             - package
-      - e2e-update:
-          requires:
-            - deploy-test
+      # - e2e-update:
+      #     requires:
+      #       - deploy-test
       # - approval: 
       #     type: approval
       #     requires:
