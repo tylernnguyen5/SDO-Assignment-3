@@ -143,6 +143,7 @@ jobs:
       #       apt install postgresql-client-10 -y
             
       #       psql -h DB_HOSTNAME -U postgres -c "CREATE DATABASE servian;"
+      - setup-cd
 
       - run: 
           name: End 2 end tests
