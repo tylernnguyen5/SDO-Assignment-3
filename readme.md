@@ -165,7 +165,7 @@ After that the updating database script will be executed from the HELM deploymen
     name: Run database update script
     command: |
     # Run update script
-    kubectl exec deployment/acme -n test --pod-running-timeout 5m -- ./node_modules/.bin/sequelize db:migrate
+    kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
 ```
 
 *Notes for the options in the `kubectl exec` command:*
