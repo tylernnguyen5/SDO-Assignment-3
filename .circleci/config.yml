@@ -114,6 +114,43 @@ jobs:
             npm run test-e2e
 
 
+  e2e-update:
+    docker:
+      - image: qawolf/qawolf:v0.9.2
+      - image: postgres:10.7
+        environment:
+          POSTGRES_PASSWORD: password
+    environment:
+      QAW_HEADLESS: true
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_NAME: servian
+      DB_HOSTNAME: localhost
+
+    steps: 
+      - checkout
+
+      - run:
+          name: set up environment
+          command: |
+            cd src
+            npm install 
+            apt update
+            apt install postgresql-client-10 -y
+            
+            psql -h localhost -U postgres -c "CREATE DATABASE servian;"
+
+      - run: 
+          name: End 2 end tests
+          no_output_timeout: 2m
+          command: |
+            cd src
+
+            npm run start:prod & 
+            npx wait-on ENDPOINT
+            
+            npm run test-e2e
+
   package:
     machine: true
     environment:
@@ -209,6 +246,10 @@ jobs:
       - run:
           name: Run database update script
           command: |
+            # Wait for the pod to be ready
+            kubectl -n test wait --for=condition=Ready --timeout=32s pod/acme
+
+            # Run update script
             kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
             

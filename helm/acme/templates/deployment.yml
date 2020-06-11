@@ -33,16 +33,16 @@ spec:
           - name: DB_PASSWORD
             value: password
 
-          - name: DB_NAME
-            value: acme-db
+          # - name: DB_NAME
+          #   value: acme-db
 
           - name: DB_HOSTNAME
             value: {{ .Values.dbhost }}
 
           - name: LOGIN_USERNAME
             value: postgres
-            
-            
+        
+
           - name: LOGIN_PASSWORD
             value: password            
 
