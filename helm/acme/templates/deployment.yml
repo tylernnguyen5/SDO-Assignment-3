@@ -34,26 +34,25 @@ spec:
             value: password
 
           # - name: DB_NAME
-          #   value: acme-db
+          #   value: servian
 
           - name: DB_HOSTNAME
             value: {{ .Values.dbhost }}
 
-          - name: LOGIN_USERNAME
-            value: postgres
+          # - name: LOGIN_USERNAME
+          #   value: postgres
         
+          # - name: LOGIN_PASSWORD
+          #   value: password            
 
-          - name: LOGIN_PASSWORD
-            value: password            
+          # - name: POSTGRES_USER
+          #   value: postgres
 
-          - name: POSTGRES_USER
-            value: postgres
-
-          - name: POSTGRES_PASSWORDD
-            value: password
+          # - name: POSTGRES_PASSWORDD
+          #   value: password
             
-          - name: POSTGRES_DB
-            value: servian
+          # - name: POSTGRES_DB
+          #   value: servian
 
         ports: 
         - containerPort: 80
