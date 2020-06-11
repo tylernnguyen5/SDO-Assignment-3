@@ -127,10 +127,7 @@ jobs:
       # DB_NAME: servian
       # DB_HOSTNAME: localhost
 
-    steps: 
-      - attach_workspace: 
-          at: ./
-      
+    steps:     
       - checkout          
 
       # # Might not need this step

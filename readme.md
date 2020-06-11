@@ -131,6 +131,17 @@ Firstly, it will deploy the RDS instance so that the application can connect to 
 
 ---
 
+Before install the pod(s), we will remove the old pod(s) from the previous builds to prevent potential confliction
+
+```
+- run:
+    name: Uninstall old pod(s)
+    command: |
+    helm delete acme -n test
+```
+
+---
+
 Then, the application will be deploy without the database connection and upgrade the database connection in the later step
 
 ```
