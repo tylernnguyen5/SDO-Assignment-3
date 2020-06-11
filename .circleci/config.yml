@@ -239,16 +239,11 @@ jobs:
           name: Upgrade app with database
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
-
-            # helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
       - run:
           name: Run database update script
           command: |
-            # Wait for the pod(s) to be ready
-            kubectl -n test wait --for=condition=Ready --timeout=32s pods -l app=acme
-
             # Run update script
             kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
