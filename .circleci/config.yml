@@ -150,12 +150,14 @@ jobs:
           command: |
             # export ENDPOINT=$(cat artifacts/dbendpoint.txt)
 
-            # kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
+            kubectl exec deployment/acme -n test -- cd src && npm run start:prod && npx wait-on ENDPOINT && npm run test-e2e
 
-            npm run start:prod & 
-            npx wait-on ENDPOINT
+            # cd src
+
+            # npm run start:prod & 
+            # npx wait-on ENDPOINT
             
-            npm run test-e2e
+            # npm run test-e2e
 
 
   package:
@@ -233,13 +235,17 @@ jobs:
             # Destroy
             # make down
             
+      - run:
+          name: Uninstall old pod(s)
+          command: |
+            helm delete acme -n test
 
       - run:
           name: Deploy app without database
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
-      # TODO: Combine to step
+      # TODO: Combine to 2 stepss
       - run:
           name: Upgrade app with database
           command: |
@@ -250,7 +256,7 @@ jobs:
           name: Run database update script
           command: |
             # Run update script
-            kubectl exec deployment/acme -n test --pod-running-timeout=5m0s -- ./node_modules/.bin/sequelize db:migrate
+            kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
      
             
 workflows:
