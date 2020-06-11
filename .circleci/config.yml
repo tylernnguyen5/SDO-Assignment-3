@@ -122,34 +122,41 @@ jobs:
           POSTGRES_PASSWORD: password
     environment:
       QAW_HEADLESS: true
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-      DB_NAME: servian
-      DB_HOSTNAME: localhost
+      # DB_USERNAME: postgres
+      # DB_PASSWORD: password
+      # DB_NAME: servian
+      # DB_HOSTNAME: localhost
 
     steps: 
-      - checkout
+      - attach_workspace: 
+          at: ./
 
-      - run:
-          name: set up environment
-          command: |
-            cd src
-            npm install 
-            apt update
-            apt install postgresql-client-10 -y
+      # # Might not need this step
+      # - run:
+      #     name: set up environment
+      #     command: |
+      #       # export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+
+      #       cd src
+      #       npm install 
+      #       apt update
+      #       apt install postgresql-client-10 -y
             
-            psql -h localhost -U postgres -c "CREATE DATABASE servian;"
+      #       psql -h DB_HOSTNAME -U postgres -c "CREATE DATABASE servian;"
 
       - run: 
           name: End 2 end tests
           no_output_timeout: 2m
           command: |
-            cd src
+            # export ENDPOINT=$(cat artifacts/dbendpoint.txt)
+
+            kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
 
             npm run start:prod & 
             npx wait-on ENDPOINT
             
             npm run test-e2e
+
 
   package:
     machine: true
@@ -199,8 +206,6 @@ jobs:
             - artifacts
 
 
-  # Tut10 example
-  # TODO: Add this to documentation:
   deploy-test:
     docker:
       - image: cimg/base:2020.01
@@ -234,7 +239,7 @@ jobs:
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
-
+      # TODO: Combine to step
       - run:
           name: Upgrade app with database
           command: |
@@ -275,9 +280,9 @@ workflows:
       - deploy-test:
           requires:
             - package
-      # - e2e-update:
-      #     requires:
-      #       - deploy-test
+      - e2e-update:
+          requires:
+            - deploy-test
       # - approval: 
       #     type: approval
       #     requires:

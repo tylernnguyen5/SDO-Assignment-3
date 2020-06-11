@@ -108,7 +108,7 @@ In the `.circleci/config.yml` file, this job has been declared as `deploy-test`
 
 Firstly, it will deploy the RDS instance so that the application can connect to later
 
-*Uncomment the `make down` if you just want to tear down the RDS instance*
+*Uncomment the `make down` and re-arrange the workflow if you just want to tear down the RDS instance*
 
 
 ```
@@ -161,7 +161,11 @@ Then, the application will be deploy without the database connection and upgrade
 After that the updating database script will be executed from the HELM deployment
 
 ```
-
+- run:
+    name: Run database update script
+    command: |
+    # Run update script
+    kubectl exec deployment/acme -n test --pod-running-timeout 5m -- ./node_modules/.bin/sequelize db:migrate
 ```
 
 *Notes for the options in the `kubectl exec` command:*
