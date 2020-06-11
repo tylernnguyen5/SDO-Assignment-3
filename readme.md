@@ -91,11 +91,9 @@ We have a directory called `helm`. Inside we have a HELM chart called `acme`.
 
 ---
 
-### Deployment Manifest
+### Deployment & Service Manifests
 
----
-
-### Service Manifest
+The manifests are located in `helm/acme/templates`
 
 
 ---

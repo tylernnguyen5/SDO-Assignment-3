@@ -33,28 +33,8 @@ spec:
           - name: DB_PASSWORD
             value: password
 
-          # TODO: Clean up
-
-          # - name: DB_NAME
-          #   value: servian
-
           - name: DB_HOSTNAME
             value: {{ .Values.dbhost }}
-
-          # - name: LOGIN_USERNAME
-          #   value: postgres
-        
-          # - name: LOGIN_PASSWORD
-          #   value: password            
-
-          # - name: POSTGRES_USER
-          #   value: postgres
-
-          # - name: POSTGRES_PASSWORDD
-          #   value: password
-            
-          # - name: POSTGRES_DB
-          #   value: servian
 
         ports: 
         - containerPort: 80

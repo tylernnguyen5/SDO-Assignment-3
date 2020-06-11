@@ -127,6 +127,8 @@ jobs:
       DB_USERNAME: postgres
       DB_PASSWORD: password
       DB_NAME: servian
+      LOGIN_USERNAME: postgres
+      LOGIN_PASSWORD: password
       # DB_HOSTNAME: localhost
 
     steps:     
@@ -152,7 +154,7 @@ jobs:
           name: End 2 end tests
           no_output_timeout: 2m
           command: |
-            # export ENDPOINT=$(cat artifacts/dbendpoint.txt)
+            export ENDPOINT=$(cat artifacts/dbendpoint.txt)
 
             cd src
 
