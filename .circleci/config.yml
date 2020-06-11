@@ -150,7 +150,7 @@ jobs:
           command: |
             # export ENDPOINT=$(cat artifacts/dbendpoint.txt)
 
-            kubectl exec deployment/acme -n test -- cd src && npm run start:prod && npx wait-on ENDPOINT && npm run test-e2e
+            kubectl exec deployment/acme -n test -- bash -c "cd src && npm run start:prod & npx wait-on ENDPOINT && npm run test-e2e"
 
             # cd src
 
