@@ -245,7 +245,7 @@ jobs:
           name: Run database update script
           command: |
             # Run update script
-            kubectl exec deployment/acme -n test --pod-running-timeout 1m -- ./node_modules/.bin/sequelize db:migrate
+            kubectl exec deployment/acme -n test --pod-running-timeout 5m -- ./node_modules/.bin/sequelize db:migrate
      
             
 workflows:

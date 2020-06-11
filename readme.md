@@ -146,7 +146,7 @@ Then, the application will be deploy without the database connection and upgrade
     helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
 ```
 
-*Notes for the option in the `helm upgrade` command:*
+*Notes for the options in the `helm upgrade` command:*
 
 - *-i : is to make the build install the chart if it isn’t already installed* 
 
@@ -155,6 +155,20 @@ Then, the application will be deploy without the database connection and upgrade
 - *--set : is telling helm to pass in values at `{{ .Values.xxx }}`* 
 
 - *--wait : is telling helm to wait until all actions are completed before continuing*
+
+---
+
+After that the updating database script will be executed from the HELM deployment
+
+```
+
+```
+
+*Notes for the options in the `kubectl exec` command:*
+
+- *-n test : indicating which namespace our deployment is in (test namespace)* 
+
+- *--pod-running-timeout : the length of time to wait until at least one pod is running*
 
 ---
 
