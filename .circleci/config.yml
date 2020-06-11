@@ -130,20 +130,21 @@ jobs:
     steps: 
       - attach_workspace: 
           at: ./
+      
+      - checkout          
 
       # # Might not need this step
-      # - run:
-      #     name: set up environment
-      #     command: |
-      #       # export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+      - run:
+          name: set up environment
+          command: |
+            # export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
 
-      #       cd src
-      #       npm install 
-      #       apt update
-      #       apt install postgresql-client-10 -y
+            cd src
+            npm install 
+            apt update
+            apt install postgresql-client-10 -y
             
-      #       psql -h DB_HOSTNAME -U postgres -c "CREATE DATABASE servian;"
-      - setup-cd
+            psql -h DB_HOSTNAME -U postgres
 
       - run: 
           name: End 2 end tests
@@ -151,14 +152,12 @@ jobs:
           command: |
             # export ENDPOINT=$(cat artifacts/dbendpoint.txt)
 
-            kubectl exec deployment/acme -n test -- bash -c "cd src && npm run start:prod & npx wait-on ENDPOINT && npm run test-e2e"
+            cd src
 
-            # cd src
-
-            # npm run start:prod & 
-            # npx wait-on ENDPOINT
+            npm run start:prod & 
+            npx wait-on ENDPOINT
             
-            # npm run test-e2e
+            npm run test-e2e
 
 
   package:
