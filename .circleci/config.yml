@@ -244,6 +244,9 @@ jobs:
       - run:
           name: Run database update script
           command: |
+            # Wait for the pod(s) to be ready
+            kubectl -n test wait --for=condition=Running --timeout=32s pods -l app=acme
+
             # Run update script
             kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
