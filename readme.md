@@ -122,17 +122,6 @@ Firstly, it will deploy the RDS instance so that the application can connect to 
 
 ---
 
-Before install the pod(s), we will remove the old pod(s) from the previous builds to prevent potential confliction
-
-```
-- run:
-    name: Uninstall old pod(s)
-    command: |
-    helm delete acme -n test
-```
-
----
-
 Then, the application will be deploy without the database connection and upgrade the database connection in the later step
 
 ```
@@ -192,6 +181,10 @@ This will take place after the `deploy-test` job in the workflow.
 
 - The stage gate is declared in the workflow as `approval`. The approval needs to be provided from CircleCI app
 
+*The database migration step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
+
+**Solution:** *rerun the job from CircleCI*
+
 ---
 
 ## Integrate logging to the solution
@@ -216,7 +209,7 @@ Download the manifest file for FluentD via this [link] (https://raw.githubuserco
 kubectl apply -f fluentd.yaml
 ```
 
-
+***This task is unfinished***
 
 ---
 

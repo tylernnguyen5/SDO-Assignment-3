@@ -243,11 +243,6 @@ jobs:
 
             # Destroy
             # make down
-            
-      - run:
-          name: Uninstall old pod(s)
-          command: |
-            helm delete acme -n test
 
       - run:
           name: Deploy app with database
@@ -294,11 +289,6 @@ jobs:
 
             # Destroy
             # make down
-            
-      - run:
-          name: Uninstall old pod(s)
-          command: |
-            helm delete acme -n prod
       
       - run:
           name: Deploy app with database
