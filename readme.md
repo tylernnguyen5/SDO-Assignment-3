@@ -95,9 +95,9 @@ We have a directory called `helm`. Inside we have a HELM chart called `acme`.
 
 In the `.circleci/config.yml` file, this job has been declared as `deploy-test`
 
----
 
 Firstly, it will deploy the RDS instance so that the application can connect to later
+
 
 *Uncomment the `make down` and re-arrange the workflow if you just want to tear down the RDS instance*
 
@@ -145,6 +145,7 @@ Then, the application will be deploy without the database connection and upgrade
 
 After that, the database migration script will be executed from the HELM deployment.
 
+
 *This step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
 
 **Solution:** *rerun the job from CircleCI*
@@ -171,6 +172,7 @@ The new end-to-end test has been declared as an new job called `e2e-update`.
 
 This will take place after the `deploy-test` job in the workflow.
 
+
 ***This task is unfinished***
 
 ---
@@ -180,6 +182,7 @@ This will take place after the `deploy-test` job in the workflow.
 - This job is similar to `deploy-test` job and can only be executed when the stage gate has been approved.
 
 - The stage gate is declared in the workflow as `approval`. The approval needs to be provided from CircleCI app
+
 
 *The database migration step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
 
@@ -203,11 +206,12 @@ kubectl create configmap cluster-info \
 --from-literal=logs.region=us-east-1 -n amazon-cloudwatch
 ```
 
-Download the manifest file for FluentD via this [link] (https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluentd/fluentd.yaml) and apply with this command from your terminal:
+Download the manifest file for FluentD via this [link](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluentd/fluentd.yaml) and apply with this command from your terminal:
 
 ```
 kubectl apply -f fluentd.yaml
 ```
+
 
 ***This task is unfinished***
 
