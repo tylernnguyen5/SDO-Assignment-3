@@ -130,18 +130,21 @@ jobs:
     steps:     
       - checkout          
 
+      - attach_workspace:
+          at: ./
+
       # # Might not need this step
       - run:
           name: set up environment
           command: |
-            # export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+            export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
 
             cd src
             npm install 
             apt update
             apt install postgresql-client-10 -y
             
-            psql -h DB_HOSTNAME -U postgres
+            psql -h $DB_HOSTNAME -U postgres
 
       - run: 
           name: End 2 end tests
@@ -152,7 +155,7 @@ jobs:
             cd src
 
             npm run start:prod & 
-            npx wait-on ENDPOINT
+            npx wait-on $ENDPOINT
             
             npm run test-e2e
 
@@ -249,6 +252,7 @@ jobs:
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
+      # This step might invoke error, please rerun from CircleCI (mentioned in the README)
       - run:
           name: Run database update script
           command: |

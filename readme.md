@@ -169,11 +169,11 @@ Then, the application will be deploy without the database connection and upgrade
 
 ---
 
-After that the updating database script will be executed from the HELM deployment.
+After that, the updating database script will be executed from the HELM deployment.
 
 *This step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
 
-**Solution** *can be trying to rerun the job from CircleCI*
+**Solution:** *rerun the job from CircleCI*
 
 ```
 - run:
