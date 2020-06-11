@@ -102,6 +102,59 @@ We have a directory called `helm`. Inside we have a HELM chart called `acme`.
 
 ## Deploy application into a non-production environment
 
+In the `.circleci/config.yml` file, this job has been declared as `deploy-test`
+
+---
+
+Firstly, it will deploy the RDS instance so that the application can connect to later
+
+*Uncomment the `make down` if you just want to tear down the RDS instance*
+
+
+```
+- run: 
+    name: Deploy infra
+    command: |
+    cd artifacts/infra
+
+    # Init remote backend
+    make init
+
+    # Deploy RDS instance
+    make up 
+
+    terraform output endpoint > ../dbendpoint.txt
+
+    # Destroy
+    # make down
+```
+
+---
+
+Then, the application will be deploy without the database connection and upgrade the database connection in the later step
+
+```
+- run:
+    name: Deploy app without database
+    command: |
+    helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
+
+
+- run:
+    name: Upgrade app with database
+    command: |
+    helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+```
+
+*Notes for the option in the `helm upgrade` command:*
+
+- *-i : is to make the build install the chart if it isn’t already installed* 
+
+- *-n test : is telling helm to use the test namespace* 
+
+- *--set : is telling helm to pass in values at `{{ .Values.xxx }}`* 
+
+- *--wait : is telling helm to wait until all actions are completed before continuing*
 
 ---
 

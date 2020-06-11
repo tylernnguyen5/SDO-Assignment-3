@@ -164,9 +164,6 @@ jobs:
 
   # Tut10 example
   # TODO: Add this to documentation:
-    # -i : is to make the build install the chart if it isn’t already installed 
-    # -n test : is telling helm to use the test namespace 
-    # --wait : is telling helm to wait until all actions are complete until continuing
   deploy-test:
     docker:
       - image: cimg/base:2020.01
@@ -205,6 +202,8 @@ jobs:
           name: Upgrade app with database
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+
+            # helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
       - run:
@@ -227,6 +226,8 @@ jobs:
       DB_PASSWORD: password
       DB_NAME: servian
       DB_HOSTNAME: localhost
+      LOGIN_USERNAME: postgres
+      LOGIN_PASSWORD: password
       ENV: test
 
     steps: 
