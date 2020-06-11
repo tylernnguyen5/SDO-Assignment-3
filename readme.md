@@ -8,12 +8,94 @@
 
 ## Dependencies
 
+### Deploy AWS infrastructure
 
+First thing we need to do is deploy our infrastructure, which is located in the `environment` directory. In order to do that, open the project directory in an terminal shell and run the commands below:
+
+```
+cd environment
+make up
+make kube-up
+```
+
+*Rememeber to update your AWS credentials*
+
+---
+
+### Update the endpoints
+
+After we deploy our infrastructure, the output from the terminal would look similar to this screenshot below:
+
+**Add a screenshot when finish deploying**
+
+A few steps need to be done:
+
+- In the `.circleci/config.yml`, update the `rmit-kops-state-xxxxxx` value in the `setup-cd` command
+
+- In the `.circleci/config.yml`, update the `ECR` value in the `package` job
+
+- In the `infra/Makefile`, update the `--backend-config` with our `DynamoDB` and `S3 Bucket` endpoints
+
+- In the `infra/terraform.tfvars`, update the `vpc_id` and `subnet_ids`
+
+---
+
+### Before starting CircleCI
+
+We need to check that we got the namespaces needed for the CI, which are `test`, `prod` and `amazon-cloudwatch`.
+
+Check by running the command below in your terminal:
+
+```
+kubectl get namespaces
+```
+
+If the namespaces mentioned were not created, run the commands below in your terminal to create them:
+
+```
+kubectl create namespace test 
+kubectl create namespace prod
+kubectl create namespace amazon-cloudwatch
+```
+
+
+*If everything is checked out, the app is ready for CircleCI deployment*
 
 ---
 
 ## HELM Chart
 
+### Source files
+
+We have a directory called `helm`. Inside we have a HELM chart called `acme`.
+
+- `Chart.yaml` - containing the description of the chart
+
+- `values.yaml` - this file is for storing the default values for a chart, which can be overriden by the user via `helm upgrade` or `helm install`
+
+- `templates/deployment.yml` - A manifest for creating a Kubernetes deployment
+
+- `templates/service.yml` - A manifest for creating a service endpoint for your deployment
+
+---
+
+### Variables
+
+- As you can see inside the `templates/deployment.yml`, there are some values that are written between `{{ .Values.xxx }}`.
+
+- These values can be either passed in via the `values.yaml` file or from the `helm upgrade` and `helm install` with the `--set` option (you can evaluate an example in `.circleci/config.yml`, in `deploy-test` job)
+
+- In the `.circleci/config.yml` file, the Image in the AWS ECR is stored at `artifacts/image.txt`
+
+- In the `.circleci/config.yml` file, the database endpoint in the AWS ECR is stored at `artifacts/dbendpoint.txt`
+
+---
+
+### Deployment Manifest
+
+---
+
+### Service Manifest
 
 
 ---
@@ -61,3 +143,9 @@ kubectl apply -f fluentd.yaml
 
 ## CLEAN UP INSTRUCTION
 
+Simply change into `environment` directory and run these commands:
+
+```
+make kube-down
+make down
+```

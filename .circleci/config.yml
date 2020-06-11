@@ -21,7 +21,7 @@ commands:
           curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
           chmod +x kops-linux-amd64
           sudo mv kops-linux-amd64 /usr/local/bin/kops
-          kops export kubecfg rmit.k8s.local --state s3://rmit-kops-state-rvk6gg
+          kops export kubecfg rmit.k8s.local --state s3://rmit-kops-state-aryrmv
 
 
 jobs:
@@ -192,25 +192,25 @@ jobs:
             terraform output endpoint > ../dbendpoint.txt
 
             # Destroy
-            make down
+            # make down
             
 
-      # - run:
-      #     name: Deploy app without database
-      #     command: |
-      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
+      - run:
+          name: Deploy app without database
+          command: |
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
       
 
-      # - run:
-      #     name: Upgrade app with database
-      #     command: |
-      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      - run:
+          name: Upgrade app with database
+          command: |
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
       
 
-      # - run:
-      #     name: Run database update script
-      #     command: |
-      #       kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
+      - run:
+          name: Run database update script
+          command: |
+            kubectl exec deployment/acme -n test -- ./node_modules/.bin/sequelize db:migrate
      
         
 
@@ -227,6 +227,7 @@ jobs:
       DB_PASSWORD: password
       DB_NAME: servian
       DB_HOSTNAME: localhost
+      ENV: test
 
     steps: 
       - checkout
@@ -251,24 +252,13 @@ jobs:
           no_output_timeout: 2m
           command: |
             export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+
             cd src
 
             npm run start:prod & 
             npx wait-on $DB_HOSTNAME
             
             npm run test-e2e
-
-  tear-down:
-    docker:
-      - image: cimg/base:2020.01
-    environment:
-      ENV: test
-    steps:
-      - attach_workspace: 
-          at: ./
-      - run: 
-          name: Taking the infra down
-          command: cd artifacts/infra && make down
             
 workflows:
   version: 2
@@ -307,5 +297,4 @@ workflows:
       # - deploy-prod:
       #     requires:
       #       - approval
-      
       
