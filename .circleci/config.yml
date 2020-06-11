@@ -137,7 +137,6 @@ jobs:
       - attach_workspace:
           at: ./
 
-      # # Might not need this step
       - run:
           name: set up environment
           command: |
@@ -162,6 +161,12 @@ jobs:
             npx wait-on $ENDPOINT
             
             npm run test-e2e
+
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
 
 
   package:
@@ -244,21 +249,14 @@ jobs:
           command: |
             helm delete acme -n test
 
-      # - run:
-      #     name: Deploy app without database
-      #     command: |
-      #       helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
-      
-      # TODO: Combine to 2 stepss
       - run:
-          name: Upgrade app with database
+          name: Deploy app with database
           command: |
             helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
-      
 
       # This step might invoke error, please rerun from CircleCI (mentioned in the README)
       - run:
-          name: Run database update script
+          name: Run database migration script
           command: |
             # Run update script
             kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
@@ -269,12 +267,77 @@ jobs:
           paths:
             - artifacts
      
+
+  deploy-prod:
+    docker:
+      - image: cimg/base:2020.01
+    environment:
+      ENV: prod
+    steps:
+      - attach_workspace: 
+          at: ./
+
+      - setup-cd
+
+      - run: 
+          name: Deploy infra
+          command: |
+            cd artifacts/infra
+
+            # Init remote backend
+            make init
+
+            # Deploy RDS instance
+            make up 
+
+            terraform output endpoint > ../dbendpoint.txt
+
+            # Destroy
+            # make down
+            
+      - run:
+          name: Uninstall old pod(s)
+          command: |
+            helm delete acme -n prod
+      
+      - run:
+          name: Deploy app with database
+          command: |
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n prod --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      
+
+      # This step might invoke error, please rerun from CircleCI (mentioned in the README)
+      - run:
+          name: Run database migration script
+          command: |
+            # Run update script
+            kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
+
             
 workflows:
   version: 2
   build-test-package:
     jobs:
-      # TODO: Update workflow
+      # New workflow
+      - build
+      - package:
+          requires: 
+            - build
+      - deploy-test:
+          requires:
+            - package
+      # - e2e-update:
+      #     requires:
+      #       - deploy-test
+      - approval: 
+          type: approval
+          requires:
+            - deploy-test
+      - deploy-prod:
+          requires:
+            - approval
+      
+      # Old workflow
       # - build
       # - integration:
       #     requires: 
@@ -289,22 +352,3 @@ workflows:
       #     filters:
       #       branches:
       #         only: master
-
-      - build
-      - package:
-          requires: 
-            - build
-      - deploy-test:
-          requires:
-            - package
-      # - e2e-update:
-      #     requires:
-      #       - deploy-test
-      # - approval: 
-      #     type: approval
-      #     requires:
-      #       - e2e
-      # - deploy-prod:
-      #     requires:
-      #       - approval
-      

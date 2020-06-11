@@ -137,13 +137,7 @@ Then, the application will be deploy without the database connection and upgrade
 
 ```
 - run:
-    name: Deploy app without database
-    command: |
-    helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --set image=$(cat artifacts/image.txt)
-
-
-- run:
-    name: Upgrade app with database
+    name: Deploy app with database
     command: |
     helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
 ```
@@ -160,7 +154,7 @@ Then, the application will be deploy without the database connection and upgrade
 
 ---
 
-After that, the updating database script will be executed from the HELM deployment.
+After that, the database migration script will be executed from the HELM deployment.
 
 *This step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
 
@@ -168,7 +162,7 @@ After that, the updating database script will be executed from the HELM deployme
 
 ```
 - run:
-    name: Run database update script
+    name: Run database migration script
     command: |
     # Run update script
     kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
@@ -184,11 +178,19 @@ After that, the updating database script will be executed from the HELM deployme
 
 ## End-to-end test to run against the non-production environment
 
+The new end-to-end test has been declared as an new job called `e2e-update`.
+
+This will take place after the `deploy-test` job in the workflow.
+
+***This task is unfinished***
 
 ---
 
 ## Deploy application into a production environment
 
+- This job is similar to `deploy-test` job and can only be executed when the stage gate has been approved.
+
+- The stage gate is declared in the workflow as `approval`. The approval needs to be provided from CircleCI app
 
 ---
 
