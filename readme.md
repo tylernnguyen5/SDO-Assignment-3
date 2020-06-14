@@ -28,7 +28,7 @@ After we deploy our infrastructure, the output from the terminal would look simi
 
 **TODO: Add a screenshot when finish deploying**
 
-![image](/screenshots/environment-make_up?raw=true)
+![image](/screenshots/environment-make_up.png?raw=true)
 
 A few steps need to be done:
 
