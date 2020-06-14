@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: "acme"
+  labels:
+    app: "acme"
+
+spec:
+  selector: # label for selecting which pods to manage
+    matchLabels:
+      app: "acme"
+
+  replicas: {{ .Values.replicaCount }}
+
+  template:   # For the Pods
+    metadata:
+      labels:
+        app: "acme"
+    
+    spec:   # Indicates that the Pods run one container
+      containers:
+      - name: "acme"
+        image: {{ .Values.image }}    # Could be pulled from Docker Hub or from AWS ECR
+        imagePullPolicy: Always
+        env:
+          - name: ENDPOINT
+            value: {{ .Values.dbhost }}
+            
+          - name: DB_USERNAME
+            value: postgres
+
+          - name: DB_PASSWORD
+            value: password
+
+          - name: DB_HOSTNAME
+            value: {{ .Values.dbhost }}
+
+        ports: 
+        - containerPort: 80

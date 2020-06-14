@@ -21,7 +21,7 @@ commands:
           curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
           chmod +x kops-linux-amd64
           sudo mv kops-linux-amd64 /usr/local/bin/kops
-          kops export kubecfg rmit.k8s.local --state s3://rmit-kops-state-7zlvq0
+          kops export kubecfg rmit.k8s.local --state s3://rmit-kops-state-a1rjcr
 
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
       
       - store_test_results:
           path: src/test-results
+
 
   integration:
     docker:
@@ -75,6 +76,7 @@ jobs:
       - store_test_results:
           path: src/test-results
   
+
   e2e:
     docker:
       - image: qawolf/qawolf:v0.9.2
@@ -112,10 +114,64 @@ jobs:
             
             npm run test-e2e
 
+
+  e2e-update:
+    docker:
+      - image: qawolf/qawolf:v0.9.2
+      - image: postgres:10.7
+        environment:
+          POSTGRES_PASSWORD: password
+    environment:
+      QAW_HEADLESS: true
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_NAME: servian
+      LOGIN_USERNAME: postgres
+      LOGIN_PASSWORD: password
+      # DB_HOSTNAME: localhost
+
+    steps:     
+      - checkout          
+
+      - attach_workspace:
+          at: ./
+
+      - run:
+          name: set up environment
+          command: |
+            export DB_HOSTNAME=$(cat artifacts/dbendpoint.txt)
+
+            cd src
+            npm install 
+            apt update
+            apt install postgresql-client-10 -y
+            
+            psql -h $DB_HOSTNAME -U postgres
+
+      - run: 
+          name: End 2 end tests
+          no_output_timeout: 2m
+          command: |
+            export ENDPOINT=$(cat artifacts/dbendpoint.txt)
+
+            cd src
+
+            npm run start:prod & 
+            npx wait-on $ENDPOINT
+            
+            npm run test-e2e
+
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
+
+
   package:
     machine: true
     environment:
-      ECR: <insert>
+      ECR: 208973674356.dkr.ecr.us-east-1.amazonaws.com
       reponame: app
       NODE_ENV: production
     steps:
@@ -134,6 +190,7 @@ jobs:
             # instll helm
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       
+            
       - run: 
           name: Build image
           command: |
@@ -147,12 +204,14 @@ jobs:
       - run:
           name: Package helm
           command: | 
+            helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts
+      
 
-            #helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts
       - run:
           name: Package infra
           command: |
             cp -r infra artifacts/infra
+
 
       - persist_to_workspace:
           root: ./
@@ -160,22 +219,129 @@ jobs:
             - artifacts
 
 
+  deploy-test:
+    docker:
+      - image: cimg/base:2020.01
+    environment:
+      ENV: test
+    steps:
+      - attach_workspace: 
+          at: ./
 
+      - setup-cd
+
+      - run: 
+          name: Deploy infra
+          command: |
+            cd artifacts/infra
+
+            # Init remote backend
+            make init
+
+            # Deploy RDS instance
+            make up 
+
+            terraform output endpoint > ../dbendpoint.txt
+
+            # Destroy
+            # make down
+
+      - run:
+          name: Deploy app with database
+          command: |
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n test --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+
+      # This step might invoke error, please rerun from CircleCI (mentioned in the README)
+      - run:
+          name: Run database migration script
+          command: |
+            # Run update script
+            kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
+
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
+     
+
+  deploy-prod:
+    docker:
+      - image: cimg/base:2020.01
+    environment:
+      ENV: prod
+    steps:
+      - attach_workspace: 
+          at: ./
+
+      - setup-cd
+
+      - run: 
+          name: Deploy infra
+          command: |
+            cd artifacts/infra
+
+            # Init remote backend
+            make init
+
+            # Deploy RDS instance
+            make up 
+
+            terraform output endpoint > ../dbendpoint.txt
+
+            # Destroy
+            # make down
+      
+
+      - run:
+          name: Deploy app with database
+          command: |
+            helm upgrade acme artifacts/acme-0.1.0.tgz -i -n prod --wait --set image=$(cat artifacts/image.txt),dbhost=$(cat artifacts/dbendpoint.txt)
+      
+
+      # This step might invoke error, please rerun from CircleCI (mentioned in the README)
+      - run:
+          name: Run database migration script
+          command: |
+            # Run update script
+            kubectl exec deployment/acme -n test --pod-running-timeout=5m -- ./node_modules/.bin/sequelize db:migrate
+
+            
 workflows:
   version: 2
   build-test-package:
     jobs:
+      # New workflow
       - build
-      - integration:
+      - package:
           requires: 
             - build
-      - e2e:
+      - deploy-test:
           requires:
-            - build
-      - package:
-          requires:
-            - e2e
-            - integration
-          filters:
-            branches:
-              only: master
+            - package
+      # - e2e-update:
+      #     requires:
+      #       - deploy-test
+      # - approval: 
+      #     type: approval
+      #     requires:
+      #       - deploy-test
+      # - deploy-prod:
+      #     requires:
+      #       - approval
+      
+      # Old workflow
+      # - build
+      # - integration:
+      #     requires: 
+      #       - build
+      # - e2e:
+      #     requires:
+      #       - build
+      # - package:
+      #     requires:
+      #       - e2e
+      #       - integration
+      #     filters:
+      #       branches:
+      #         only: master
