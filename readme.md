@@ -26,7 +26,7 @@ make kube-up
 
 After we deploy our infrastructure, the output from the terminal would look similar to this screenshot below:
 
-**Add a screenshot when finish deploying**
+**TODO: Add a screenshot when finish deploying**
 
 A few steps need to be done:
 
