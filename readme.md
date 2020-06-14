@@ -28,6 +28,8 @@ After we deploy our infrastructure, the output from the terminal would look simi
 
 **TODO: Add a screenshot when finish deploying**
 
+![image](/screenshots/environment-make_up?raw=true)
+
 A few steps need to be done:
 
 - In the `.circleci/config.yml`, update the `rmit-kops-state-xxxxxx` value in the `setup-cd` command
@@ -210,10 +212,9 @@ Download the manifest file for FluentD via this [link](https://raw.githubusercon
 kubectl apply -f fluentd.yaml
 ```
 
-Then go to the AWS Console and verify that the log(s) has been created
+Then go to the AWS Console, verify that there are log group(s) and select one to view the logs
 
-
-***This task is unfinished***
+screenshot
 
 ---
 
