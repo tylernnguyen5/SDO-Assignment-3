@@ -190,6 +190,7 @@ jobs:
             # instll helm
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       
+            
       - run: 
           name: Build image
           command: |
@@ -205,10 +206,12 @@ jobs:
           command: | 
             helm package helm/acme --app-version ${CIRCLE_SHA1} -d artifacts
       
+
       - run:
           name: Package infra
           command: |
             cp -r infra artifacts/infra
+
 
       - persist_to_workspace:
           root: ./
@@ -289,6 +292,7 @@ jobs:
             # Destroy
             # make down
       
+
       - run:
           name: Deploy app with database
           command: |
