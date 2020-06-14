@@ -2,6 +2,8 @@
 
 **Student Number: s3651311**
 
+*While working on the assignment, there was a problem with CircleCI plan. Therefore, I needed to push the code from a different remote repo, but accidentally used my private account (backup-ngocthachnguyen98), instead of my student account, to push the code from my workspace. That account is recorded in the commit history. I'm sorry for this mistake*
+
 # ACME App
 
 ---
