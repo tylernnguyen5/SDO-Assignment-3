@@ -198,12 +198,10 @@ First we create a namespace named `amazon-cloudwatch` with `kubectl` using this 
 kubectl create namespace amazon-cloudwatch
 ```
 
-Then we create a configuration map for the FluentD service
+Then we create a configuration map for the FluentD service:
 
 ```
-kubectl create configmap cluster-info \ 
---from-literal=cluster.name=rmit.k8s.local \
---from-literal=logs.region=us-east-1 -n amazon-cloudwatch
+kubectl create configmap cluster-info --from-literal=cluster.name=rmit.k8s.local --from-literal=logs.region=us-east-1 -n amazon-cloudwatch
 ```
 
 Download the manifest file for FluentD via this [link](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluentd/fluentd.yaml) and apply with this command from your terminal:
@@ -211,6 +209,8 @@ Download the manifest file for FluentD via this [link](https://raw.githubusercon
 ```
 kubectl apply -f fluentd.yaml
 ```
+
+Then go to the AWS Console and verify that the log(s) has been created
 
 
 ***This task is unfinished***
