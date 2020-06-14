@@ -26,8 +26,6 @@ make kube-up
 
 After we deploy our infrastructure, the output from the terminal would look similar to this screenshot below:
 
-**TODO: Add a screenshot when finish deploying**
-
 ![image](/screenshots/environment-make_up.png?raw=true)
 
 A few steps need to be done:
@@ -97,12 +95,14 @@ We have a directory called `helm`. Inside we have a HELM chart called `acme`.
 
 In the `.circleci/config.yml` file, this job has been declared as `deploy-test`
 
+![image](/screenshots/Deploying_app_with_db_and_migratation.png?raw=true)
+
+---
 
 Firstly, it will deploy the RDS instance so that the application can connect to later
 
 
 *Uncomment the `make down` and re-arrange the workflow if you just want to tear down the RDS instance*
-
 
 ```
 - run: 
@@ -185,6 +185,7 @@ This will take place after the `deploy-test` job in the workflow.
 
 - The stage gate is declared in the workflow as `approval`. The approval needs to be provided from CircleCI app
 
+![image](/screenshots/Successful_build_without_e2e_test_and_logging.png?raw=true)
 
 *The database migration step may invoke error when executed while trying to terminate **the old pods** and set **the new pod** running*
 
@@ -192,7 +193,7 @@ This will take place after the `deploy-test` job in the workflow.
 
 ---
 
-## Integrate logging to the solution
+## Integrate logging to the solution with AWS CloudWatch
 
 First we create a namespace named `amazon-cloudwatch` with `kubectl` using this command:
 
@@ -214,7 +215,9 @@ kubectl apply -f fluentd.yaml
 
 Then go to the AWS Console, verify that there are log group(s) and select one to view the logs
 
-screenshot
+![image](/screenshots/CloudWatch-Log_Groups.png?raw=true)
+
+![image](/screenshots/CloudWatch-Application_Logging.png?raw=true)
 
 ---
 
