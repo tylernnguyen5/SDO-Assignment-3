@@ -9,7 +9,9 @@
 
 # ACME App
 
----
+## Requirements
+
+The assignment specifications can be viewed [here](./SDO_Assignment3.pdf)
 
 ## Dependencies
 
