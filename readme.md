@@ -1,17 +1,22 @@
 # COSC2759 System Deployment and Operation - Assignment 3 Semeter 1 2020 at RMIT
 
-
 **Student Name: Thach Ngoc Nguyen**
 
 **Student Number: s3651311**
-
-*While working on the assignment, there was a problem with CircleCI plan. Therefore, I needed to push the code from a different remote repo, but accidentally used my private account (backup-ngocthachnguyen98), instead of my student account, to push the code from my workspace. That account is recorded in the commit history. I'm sorry for this mistake*
 
 # ACME App
 
 ## Requirements
 
 The assignment specifications can be viewed [here](./SDO_Assignment3.pdf)
+
+### Summary
+
+- Create a HELM chart to deploy the application to Kubernetes
+- Deploy the application into a non-production environment
+- Change the end-to-end test to run against the non-production environment
+- Deploy the application into a production environment
+- Integrate logging to the solution so any logs from the Kubernetes cluster is automatically stored in AWS CloudWatch for the future.
 
 ## Dependencies
 
